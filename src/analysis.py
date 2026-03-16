@@ -25,4 +25,15 @@ report = pd.DataFrame({
 "balance":[balance]
 })
 
+
+import matplotlib.pyplot as plt
+
+category_summary.plot(kind="bar")
+
+plt.title("Expenses by Category")
+plt.ylabel("Amount ($)")
+plt.xlabel("Category")
+
+plt.show()
+
 report.to_csv("reports/monthly_report.csv",index=False)
