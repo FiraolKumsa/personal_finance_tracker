@@ -1,39 +1,38 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
 
-income = pd.read_csv("data/income.csv")
-expenses = pd.read_csv("data/expenses.csv")
+# --- Set paths relative to this script ---
+BASE_DIR = Path(__file__).resolve().parent.parent  # project root
+DATA_DIR = BASE_DIR / "data"
 
+INCOME_FILE = DATA_DIR / "income.csv"
+EXPENSE_FILE = DATA_DIR / "expenses.csv"
+
+# --- Read data ---
+income = pd.read_csv(INCOME_FILE)
+expenses = pd.read_csv(EXPENSE_FILE)
+
+# --- Calculate salary ---
 income["salary"] = income["hours_worked"] * income["hourly_rate"]
 
+# --- Financial summary ---
 total_salary = income["salary"].sum()
-total_expense = expenses["amount"].sum()
+total_expenses = expenses["amount"].sum()
+balance = total_salary - total_expenses
 
-balance = total_salary - total_expense
+print("------ FINANCIAL SUMMARY ------")
+print(f"Total Salary: {total_salary}")
+print(f"Total Expenses: {total_expenses}")
+print(f"Balance: {balance}\n")
 
+# --- Expense by category ---
 category_summary = expenses.groupby("category")["amount"].sum()
-
-print("Total Salary:", total_salary)
-print("Total Expenses:", total_expense)
-print("Balance:", balance)
-
-print("\nExpenses by Category")
+print("Expenses by Category:")
 print(category_summary)
 
-report = pd.DataFrame({
-"salary":[total_salary],
-"expenses":[total_expense],
-"balance":[balance]
-})
-
-
-import matplotlib.pyplot as plt
-
+# --- Visualization ---
 category_summary.plot(kind="bar")
-
 plt.title("Expenses by Category")
 plt.ylabel("Amount ($)")
-plt.xlabel("Category")
-
 plt.show()
-
-report.to_csv("reports/monthly_report.csv",index=False)
